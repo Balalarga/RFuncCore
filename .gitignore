@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# Building artifacts
+Binaries/
+Build/
+
+
+# If wanna use internal vcpkg just clone it right here
+vcpkg/
+vcpkg_installed/
+
