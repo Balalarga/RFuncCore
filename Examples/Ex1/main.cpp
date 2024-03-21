@@ -4,6 +4,9 @@
 
 int main()
 {
-    std::cout << "Hwllo\n";
+    Init();
+    std::cout << "Hello\n";
+
     return 0;
 }
+

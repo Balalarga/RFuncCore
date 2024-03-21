@@ -40,3 +40,7 @@ Build/
 vcpkg/
 vcpkg_installed/
 
+# Lsp stuff
+.cache/
+compile_commands.json
+
