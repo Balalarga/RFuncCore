@@ -1,25 +1,21 @@
 #pragma once
 
+#include <memory>
 #include <string_view>
 
 
 class ILexerObject
 {
 public:
-    virtual std::string GetPattern() const = 0;
-
-    virtual void SetData(std::string_view code)
-    {
-        _source = code;
-    }
+	~ILexerObject() = default;
+};
 
 
-    const std::string& GetSource()
-    {
-        return _source;
-    }
+class ILexerProducer
+{
+public:
+	~ILexerProducer() = default;
 
-
-private:
-    std::string _source;
+	virtual std::string GetPattern() const = 0;
+	virtual std::unique_ptr<ILexerObject> Produce(std::string_view code) = 0;
 };

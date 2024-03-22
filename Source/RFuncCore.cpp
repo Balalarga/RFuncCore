@@ -4,5 +4,5 @@
 
 void Init()
 {
-    std::cout << "Init\n";
+	std::cout << "Init\n";
 }
