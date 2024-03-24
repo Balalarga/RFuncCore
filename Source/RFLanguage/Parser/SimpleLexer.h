@@ -1,9 +1,18 @@
 #pragma once
 
+#include <cstdint>
+#include <memory>
 #include <queue>
-#include <set>
 #include <string_view>
+#include "LexerProcessor.h"
 
+
+struct Lexeme
+{
+	std::string string;
+	uint32_t line;
+	uint32_t column;
+};
 
 class SimpleLexer
 {
@@ -11,11 +20,11 @@ public:
 	SimpleLexer() = default;
 	~SimpleLexer() = default;
 
-	SimpleLexer& AddSplitter(const std::vector<char>& splitters);
+	SimpleLexer& AddLexerProcessor(std::unique_ptr<ILexerProcessor>&& obj);
 
-	std::queue<std::string> Process(std::string_view code);
-	
+	std::queue<Lexeme> Process(std::string_view code);
+
 
 private:
-	std::set<char> _splitters;
+	std::vector<std::unique_ptr<ILexerProcessor>> _processors;
 };

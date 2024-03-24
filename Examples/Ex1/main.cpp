@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
-#include "RFLanguage/Parser/SimpleLexer.h"
 #include "RFLanguage/Parser/LexerObject.h"
+#include "RFLanguage/Parser/SimpleLexer.h"
 
 
 class NumberProducer: public ILexerProducer
@@ -22,7 +22,18 @@ public:
 int main()
 {
 	SimpleLexer lexer;
-	lexer.AddProducer<NumberProducer>();
+	lexer.AddSplitter({'\n', ' ', '\t'});
+	auto lexemes = lexer.Process(R"(
+               def main()
+               {
+                    reutrn 1+2;
+               })");
+	while (!lexemes.empty())
+	{
+		auto& lexeme = lexemes.front();
+		std::cout << lexeme.string << std::endl;
+		lexemes.pop();
+	}
 
 
 	return 0;

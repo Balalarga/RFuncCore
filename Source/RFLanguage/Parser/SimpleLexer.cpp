@@ -1,26 +1,21 @@
 #include "SimpleLexer.h"
+#include <sstream>
 
 
-SimpleLexer& SimpleLexer::AddSplitter(const std::vector<char>& splitters)
+SimpleLexer& SimpleLexer::AddLexerProcessor(std::unique_ptr<ILexerProcessor>&& obj)
 {
-	_splitters.insert(splitters.begin(), splitters.end());
+	_processors.push_back(std::move(obj));
 	return *this;
 }
 
-std::queue<std::string> SimpleLexer::Process(std::string_view code)
+std::queue<Lexeme> SimpleLexer::Process(std::string_view code)
 {
-	std::queue<std::string> tokens;
+	std::queue<Lexeme> tokens;
 
-	size_t startIdx = 0;
-	for (size_t i = startIdx; i < code.size(); ++i)
-	{
-		if (_splitters.contains(code[i]))
-		{
-			tokens.push(code.substr(startIdx, i).data());
-			startIdx = i + 1;
-		}
-		
-	}
+	std::istringstream stream(code.data());
+
+	for (auto& processor: _processors)
+		processor->Read(stream);
 
 	return tokens;
 }
