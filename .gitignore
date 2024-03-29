@@ -34,6 +34,8 @@
 # Building artifacts
 Binaries/
 Build/
+# Msvc Building argifacts
+VcBuild/
 
 
 # If wanna use internal vcpkg just clone it right here

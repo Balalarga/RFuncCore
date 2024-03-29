@@ -1,18 +1,10 @@
 #pragma once
 
-#include <cstdint>
 #include <memory>
 #include <queue>
 #include <string_view>
 #include "LexerProcessor.h"
 
-
-struct Lexeme
-{
-	std::string string;
-	uint32_t line;
-	uint32_t column;
-};
 
 class SimpleLexer
 {
@@ -22,9 +14,14 @@ public:
 
 	SimpleLexer& AddLexerProcessor(std::unique_ptr<ILexerProcessor>&& obj);
 
-	std::queue<Lexeme> Process(std::string_view code);
+	std::queue<LexerToken> Process(std::string_view code);
+	size_t GetProcessedChars() const
+	{
+		return _processedPos;
+	}
 
 
 private:
 	std::vector<std::unique_ptr<ILexerProcessor>> _processors;
+	size_t _processedPos = 0;
 };

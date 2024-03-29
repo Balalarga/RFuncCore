@@ -1,40 +1,83 @@
 #include <iostream>
-#include <memory>
-#include "RFLanguage/Parser/LexerObject.h"
-#include "RFLanguage/Parser/SimpleLexer.h"
+#include "RFLanguage/Lexer/DefaultLexerProcessors.h"
+#include "RFLanguage/Lexer/SimpleLexer.h"
+#include "RFLanguage/Parser/Parser.h"
 
 
-class NumberProducer: public ILexerProducer
+struct TokenPrinter
 {
-public:
-	virtual std::string GetPattern() const
+	void operator()(const char& ch)
 	{
-		return "";
+		std::cout << "C: '" << ch << "'\n";
 	}
-
-	virtual std::unique_ptr<ILexerObject> Produce(std::string_view code)
+	void operator()(const float& fl)
 	{
-		return std::make_unique<ILexerObject>();
+		std::cout << "N: " << fl << std::endl;
+	}
+	void operator()(const std::string& str)
+	{
+		std::cout << "K: " << str << std::endl;
 	}
 };
 
 
-int main()
+void LexerTest()
 {
 	SimpleLexer lexer;
-	lexer.AddSplitter({'\n', ' ', '\t'});
-	auto lexemes = lexer.Process(R"(
+	lexer.AddLexerProcessor(std::make_unique<SymbolsLexerProcessor>())
+		.AddLexerProcessor(std::make_unique<NumberLexerProcessor>())
+		.AddLexerProcessor(std::make_unique<KeywordLexerProcessor>());
+	std::string sourceCode = R"(
                def main()
                {
-                    reutrn 1+2;
-               })");
-	while (!lexemes.empty())
+                    return 1+2;
+               })";
+	auto tokens = lexer.Process(sourceCode);
+
+	while (!tokens.empty())
 	{
-		auto& lexeme = lexemes.front();
-		std::cout << lexeme.string << std::endl;
-		lexemes.pop();
+		const auto& token = tokens.front();
+		std::visit(TokenPrinter(), token);
+		tokens.pop();
 	}
+	std::cout << "Processed chars: " << lexer.GetProcessedChars() << std::endl;
+	if (lexer.GetProcessedChars() < sourceCode.size())
+	{
+		std::cout << "----------- Rest code ----------\n";
+		std::cout << std::string_view(sourceCode).substr(lexer.GetProcessedChars()) << std::endl;
+		std::cout << "--------------------------------\n";
+	}
+	else
+	{
+		std::cout << sourceCode << std::endl;
+	}
+}
+
+void ParserTest()
+{
+	SimpleLexer lexer;
+	lexer.AddLexerProcessor(std::make_unique<SymbolsLexerProcessor>())
+		.AddLexerProcessor(std::make_unique<NumberLexerProcessor>())
+		.AddLexerProcessor(std::make_unique<KeywordLexerProcessor>());
+	std::string sourceCode = R"(
+               def main()
+               {
+                    return 1+2;
+               })";
+	auto tokens = lexer.Process(sourceCode);
+
+	while (!tokens.empty())
+	{
+		const auto& token = tokens.front();
+		std::visit(TokenPrinter(), token);
+		tokens.pop();
+	}
+	Parser parser;
+}
 
 
+int main()
+{
+	// LexerTest();
 	return 0;
 }
