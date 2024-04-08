@@ -64,20 +64,17 @@ void ParserTest()
                {
                     return 1+2;
                })";
-	auto tokens = lexer.Process(sourceCode);
+	std::queue<LexerToken> tokens = lexer.Process(sourceCode);
 
-	while (!tokens.empty())
-	{
-		const auto& token = tokens.front();
-		std::visit(TokenPrinter(), token);
-		tokens.pop();
-	}
 	Parser parser;
+	// Setup parser here....
+	//
+	parser.Produce(std::move(tokens));
 }
 
 
 int main()
 {
-	// LexerTest();
+	ParserTest();
 	return 0;
 }

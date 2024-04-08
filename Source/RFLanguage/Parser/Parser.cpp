@@ -7,6 +7,7 @@ void Parser::Produce(std::queue<LexerToken>&& tokenQueue)
 	{
 		auto token = tokenQueue.front();
 
+
 		tokenQueue.pop();
 	}
 }
