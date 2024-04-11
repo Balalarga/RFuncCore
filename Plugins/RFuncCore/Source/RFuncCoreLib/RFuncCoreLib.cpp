@@ -5,10 +5,16 @@
 
 #define LOCTEXT_NAMESPACE "FRFuncCoreLibModule"
 
+DEFINE_LOG_CATEGORY_STATIC(LogRFuncCoreLib, Log, All);
+
 
 void FRFuncCoreLibModule::StartupModule()
 {
-	ensure(Ranok::Opencl::Executor::Init() != CL_SUCCESS);
+	if (!ensure(Ranok::Opencl::Executor::Init() == CL_SUCCESS))
+	{
+		UE_LOG(LogRFuncCoreLib, Error, TEXT("Cannot init OpenCL!!"));
+	}
+	UE_LOG(LogRFuncCoreLib, Log, TEXT("OpenCL is loaded"));
 }
 
 void FRFuncCoreLibModule::ShutdownModule()
